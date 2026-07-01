@@ -2,6 +2,8 @@
 
 🌐 **Language / Ngôn ngữ:** [Tiếng Việt](#tiếng-việt) | [English](#english)
 
+Tool được lấy cảm hứng và chỉnh sửa lại từ dự án Ichi của bạn Nguyễn Đức Anh
+
 ---
 
 <a name="tiếng-việt"></a>
