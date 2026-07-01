@@ -1,0 +1,163 @@
+<main class="min-h-screen bg-[#070b14] relative flex flex-col items-center justify-center p-4 selection:bg-red-500/30 font-sans overflow-hidden">
+  <!-- Tailwind compilation safety list for dynamically bound classes: -->
+  <!-- px-3 py-1.5 py-2.5 px-10 py-4 text-[13px] text-[10px] text-[180px] text-[70px] sm:text-[100px] md:text-[140px] -->
+  
+  <!-- Cinematic Film Grain & Vignette Overlay -->
+  <div class="pointer-events-none absolute inset-0 z-0 select-none">
+    <svg class="absolute inset-0 w-full h-full opacity-[0.25] mix-blend-overlay" width="100%" height="100%">
+      <filter id="cinematicNoise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+      </filter>
+      <rect width="100%" height="100%" filter="url(#cinematicNoise)"/>
+    </svg>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.7)_100%)]"></div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="absolute top-8 w-full max-w-2xl px-4 z-50">
+      <div class="bg-red-950/80 border border-red-500/30 text-red-200 px-4 py-3 rounded-xl text-sm justify-center text-center shadow-2xl backdrop-blur-md">
+        {{ errorMessage() }}
+      </div>
+    </div>
+  }
+
+  @if (showSuccessToast()) {
+    <div class="absolute top-16 w-full max-w-md px-4 z-[60]">
+      <div class="px-4 py-3 flex items-center justify-center space-x-2 shadow-2xl backdrop-blur-md"
+        [class.bg-teal-950/80]="uiMode() !== 'enhanced'"
+        [class.border]="uiMode() !== 'enhanced'"
+        [class.border-teal-500/30]="uiMode() !== 'enhanced'"
+        [class.text-teal-200]="uiMode() !== 'enhanced'"
+        [class.rounded-xl]="uiMode() !== 'enhanced'"
+        [class.text-sm]="uiMode() !== 'enhanced'"
+        [class.bg-amber-950/90]="uiMode() === 'enhanced'"
+        [class.border-2]="uiMode() === 'enhanced'"
+        [class.border-amber-500/50]="uiMode() === 'enhanced'"
+        [class.text-amber-200]="uiMode() === 'enhanced'"
+        [class.rounded-2xl]="uiMode() === 'enhanced'"
+        [class.text-base]="uiMode() === 'enhanced'"
+        [class.font-medium]="uiMode() === 'enhanced'"
+      >
+        <mat-icon [class.!w-[20px]]="uiMode() !== 'enhanced'" [class.!h-[20px]]="uiMode() !== 'enhanced'" [class.!text-[20px]]="uiMode() !== 'enhanced'" [class.!w-[24px]]="uiMode() === 'enhanced'" [class.!h-[24px]]="uiMode() === 'enhanced'" [class.!text-[24px]]="uiMode() === 'enhanced'">
+           check_circle
+        </mat-icon>
+        <span>{{ successMessage() }}</span>
+      </div>
+    </div>
+  }
+
+  @if (isCountingDown()) {
+    <app-countdown-overlay
+      [countdownValue]="countdownValue()"
+      [uiMode]="uiMode()"
+      (cancelRecording)="stopRecording()"
+    ></app-countdown-overlay>
+  }
+
+  <div class="relative z-10 flex flex-col items-center -translate-y-[3vh]">
+    
+    <!-- Record Button -->
+    <app-record-button
+      [isRecording]="isRecording()"
+      (toggleRecord)="toggleRecording()"
+    ></app-record-button>
+
+    <!-- Status text & Time -->
+    <div class="absolute top-full mt-8 left-1/2 -translate-x-1/2 text-center flex flex-col items-center justify-start w-[340px] sm:w-[460px] px-4">
+      @if (isRecording()) {
+        <div class="flex items-center space-x-3 text-[#FDA4AF] font-mono text-3xl tracking-wider font-light drop-shadow-[0_0_12px_rgba(225,29,72,0.5)] select-none">
+           <span class="w-2.5 h-2.5 bg-[#E11D48] rounded-full animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.9)] mt-1"></span>
+           <span>{{ formattedTime() }}</span>
+        </div>
+        
+        <!-- Audio Equalizer Bars -->
+        <div class="flex items-end justify-center space-x-1.5 mt-4 h-6">
+           @for (level of audioLevels(); track $index) {
+              <div 
+                class="w-1.5 bg-[#E11D48] rounded-t-sm transition-all duration-75 ease-out shadow-[0_0_8px_rgba(225,29,72,0.4)]"
+                [style.height]="level + '%'"
+              ></div>
+           }
+        </div>
+      } @else {
+         <app-camera-toggle
+           [uiMode]="uiMode()"
+           [isCameraEnabled]="isCameraEnabled()"
+           [isRecording]="isRecording()"
+           [isCountingDown]="isCountingDown()"
+           [cameraError]="cameraError()"
+           [hasMicDevice]="hasMicDevice()"
+           [micPermission]="micPermission()"
+           [recordingAttempted]="recordingAttempted()"
+           (toggleCamera)="toggleCamera()"
+         ></app-camera-toggle>
+      }
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <app-footer 
+    [uiMode]="uiMode()" 
+    [version]="version" 
+    (openSettings)="openSettingsModal()" 
+    (openGuide)="showGuideModal.set(true)">
+  </app-footer>
+
+  <!-- User Guide Modal Component -->
+  <app-guide-modal [(show)]="showGuideModal" [uiMode]="uiMode()"></app-guide-modal>
+
+  <!-- Settings Modal Component -->
+  <app-settings-modal
+    [(show)]="showSettingsModal"
+    [(tempQualityPreset)]="tempQualityPreset"
+    [(tempCameraSize)]="tempCameraSize"
+    [(tempUiMode)]="tempUiMode"
+    [(tempFpsPreset)]="tempFpsPreset"
+    [(tempShowBorder)]="tempShowBorder"
+    [(tempBorderColor)]="tempBorderColor"
+    [(tempLanguage)]="tempLanguage"
+    (saveSettings)="saveSettings()"
+    (resetSettings)="resetToDefaultSettings()"
+  ></app-settings-modal>
+
+  @if (isCameraEnabled() && cameraStream()) {
+    <div 
+      class="fixed z-[100] rounded-full overflow-hidden shadow-2xl bg-slate-900 flex items-center justify-center select-none group"
+       [class.transition-all]="!isDraggingCam()"
+       [class.duration-300]="!isDraggingCam()"
+       [class.transition-opacity]="isDraggingCam()"
+       [class.transition-shadow]="isDraggingCam()"
+       [class.border-2]="showSettingsModal() ? tempShowBorder() : showBorder()"
+       [style.borderColor]="showSettingsModal() ? tempBorderColor() : borderColor()"
+       [class.opacity-0]="isRecording()"
+       [class.pointer-events-none]="isRecording()"
+       [class.cursor-move]="!isRecording() && !isCountingDown()"
+       [class.cursor-not-allowed]="isRecording() || isCountingDown()"
+       [class.hover:ring-4]="!isRecording() && !isCountingDown()"
+       [class.hover:ring-teal-500/30]="uiMode() !== 'enhanced' && !isRecording() && !isCountingDown()"
+       [class.hover:ring-amber-500/30]="uiMode() === 'enhanced' && !isRecording() && !isCountingDown()"
+       [style.left.px]="cameraPos().x"
+       [style.top.px]="cameraPos().y"
+       [style.width.px]="showSettingsModal() ? tempCameraSize() : cameraSize()"
+       [style.height.px]="showSettingsModal() ? tempCameraSize() : cameraSize()"
+       appDraggableCamera
+       [cameraSize]="showSettingsModal() ? tempCameraSize() : cameraSize()"
+       [cameraPos]="cameraPos()"
+       [isRecording]="isRecording()"
+       [isCountingDown]="isCountingDown()"
+       [cachedWindowWidth]="cachedWindowWidth"
+       [cachedWindowHeight]="cachedWindowHeight"
+       (positionChange)="cameraPos.set($event)"
+       (draggingStateChange)="isDraggingCam.set($event)"
+    >
+       <video id="camPreview" autoplay playsinline class="w-full h-full object-cover transform scale-x-[-1] pointer-events-none"></video>
+       @if (!isRecording() && !isCountingDown()) {
+          <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all pointer-events-none rounded-full">
+            <div class="bg-white/20 p-2 rounded-full border border-white/30 backdrop-blur-md shadow-lg flex items-center justify-center">
+              <mat-icon class="drop-shadow-md !text-[28px] !w-[28px] !h-[28px]" style="color: #ffffff;">open_with</mat-icon>
+            </div>
+          </div>
+       }
+    </div>
+  }
+</main>
