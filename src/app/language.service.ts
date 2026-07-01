@@ -16,7 +16,7 @@ export class LanguageService {
       // General
       SETTINGS: 'Cài đặt',
       USER_GUIDE: 'Hướng dẫn sử dụng',
-      GITHUB: 'GitHub',
+      GITHUB: 'GitHub.com',
       COPYRIGHT: 'Phạm Đình Kiên',
       CLOSE: 'Đóng',
       CANCEL: 'Hủy',
