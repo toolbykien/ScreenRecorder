@@ -39,6 +39,7 @@ import { LanguageService } from './language.service';
         <span class="absolute inset-0 rounded-full border-[8px] border-[#880d28] shadow-[inset_0_4px_10px_rgba(0,0,0,0.7),0_0_24px_rgba(225,29,72,0.6)]"></span>
       }
 
+
       <!-- Center Icon/Shape (also worn) -->
       <div 
         class="relative z-10 transition-all duration-500 pointer-events-none flex items-center justify-center overflow-hidden w-full h-full"

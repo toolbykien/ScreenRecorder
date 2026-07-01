@@ -12,7 +12,7 @@ import { LanguageService } from './language.service';
       <button (click)="openSettings.emit()" class="hover:text-slate-200 transition-colors font-medium text-slate-300 underline decoration-slate-500 underline-offset-4 uppercase cursor-pointer"
               [class.font-bold]="uiMode() === 'enhanced'">{{ lang.translations().SETTINGS }}</button>
       <span>&bull;</span>
-      <span>Screen Recorder 2 &bull; {{ version() }}</span>
+      <span>Screen Recorder &bull; {{ version() }}</span>
       <span>&bull;</span>
       <a href="https://github.com/toolbykien/ScreenRecorder" target="_blank" rel="noopener noreferrer" class="hover:text-slate-200 transition-colors cursor-pointer"
          [class.font-bold]="uiMode() === 'enhanced'">{{ lang.translations().GITHUB }}</a>
