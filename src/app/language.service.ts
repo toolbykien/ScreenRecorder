@@ -106,7 +106,7 @@ export class LanguageService {
       GUIDE_STEP_3_BODY: 'Khi quá trình quay màn hình bắt đầu, chương trình sẽ đếm lùi 5s để bạn chuẩn bị, và chỉ chính thức ghi sau khi âm thanh Action vang lên.',
 
       GUIDE_STEP_4: 'Vị trí lưu video',
-      GUIDE_STEP_4_BODY: 'Sau khi bạn bấm dừng ghi hình, video sẽ được tự động xử lý và tải về máy tính (quá trình này hoàn toàn offline). Theo mặc định, video sẽ nằm trong thư mục Downloads (Tải xuống) của máy tính với tên dạng [Ichi_Ichi_SR]_[Ngay_Thang_Nam]_[Gio_Phut_Giay].webm. Bạn có thể mở mục "Nội dung tải xuống" (Downloads) trên trình duyệt để mở video.'
+      GUIDE_STEP_4_BODY: 'Sau khi bạn bấm dừng ghi hình, video sẽ được tự động xử lý và tải về máy tính (quá trình này hoàn toàn offline). Theo mặc định, video sẽ nằm trong thư mục Downloads (Tải xuống) của máy tính với tên dạng [ScreenRecorder]_[Ngay_Thang_Nam]_[Gio_Phut_Giay].webm. Bạn có thể mở mục "Nội dung tải xuống" (Downloads) trên trình duyệt để mở video.'
     },
     en: {
       // General
@@ -202,7 +202,7 @@ export class LanguageService {
       GUIDE_STEP_3_BODY: 'Before starting, a 5-second countdown triggers so you can position your layouts. Streaming strictly initiates after the action voice chime.',
 
       GUIDE_STEP_4: 'Output Directory',
-      GUIDE_STEP_4_BODY: 'As you press stop recording, the video prepares and launches in local browser memory. By default, finding your assets is done on local Downloads directory under names starting with [Ichi_Ichi_SR]_[Day_Month_Year]_[Hour_Minute_Second].webm. Review Downloads page in browser history to play the file.'
+      GUIDE_STEP_4_BODY: 'As you press stop recording, the video prepares and launches in local browser memory. By default, finding your assets is done on local Downloads directory under names starting with [ScreenRecorder]_[Day_Month_Year]_[Hour_Minute_Second].webm. Review Downloads page in browser history to play the file.'
     }
   };
 
