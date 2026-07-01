@@ -39,15 +39,6 @@ import { LanguageService } from './language.service';
         <span class="absolute inset-0 rounded-full border-[8px] border-[#880d28] shadow-[inset_0_4px_10px_rgba(0,0,0,0.7),0_0_24px_rgba(225,29,72,0.6)]"></span>
       }
 
-      <!-- Cinematic Lens Bezel Engraving -->
-      @if (!isRecording()) {
-        <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full pointer-events-none z-20 opacity-50 mix-blend-overlay drop-shadow-[0_1px_1px_rgba(0,0,0,0.9)] transition-all duration-300 transform group-hover:rotate-12 group-hover:opacity-70">
-          <path id="bezel-path" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
-          <text font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="4.5" font-weight="600" fill="#ffffff" letter-spacing="0.25em" class="uppercase font-mono">
-          </text>
-        </svg>
-      }
-
       <!-- Center Icon/Shape (also worn) -->
       <div 
         class="relative z-10 transition-all duration-500 pointer-events-none flex items-center justify-center overflow-hidden w-full h-full"
