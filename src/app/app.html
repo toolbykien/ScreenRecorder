@@ -1,57 +1,57 @@
-<main class="min-h-screen bg-[#070b14] relative flex flex-col items-center justify-center p-6 selection:bg-blue-500/30 font-sans overflow-hidden">
-  
+<main
+  class="min-h-screen bg-[#070b14] relative flex flex-col items-center justify-center p-6 selection:bg-blue-500/30 font-sans overflow-hidden">
+
   <!-- Cinematic Film Grain & Vignette Overlay -->
   <div class="pointer-events-none absolute inset-0 z-0 select-none">
     <svg class="absolute inset-0 w-full h-full opacity-[0.25] mix-blend-overlay" width="100%" height="100%">
       <filter id="cinematicNoise">
-        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
       </filter>
-      <rect width="100%" height="100%" filter="url(#cinematicNoise)"/>
+      <rect width="100%" height="100%" filter="url(#cinematicNoise)" />
     </svg>
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.75)_100%)]"></div>
   </div>
 
   <!-- Top Error Notification -->
   @if (errorMessage()) {
-    <div class="absolute top-8 w-full max-w-2xl px-4 z-[130]">
-      <div class="bg-red-950/90 border border-red-500/40 text-red-200 px-5 py-3.5 rounded-2xl text-sm text-center shadow-[0_20px_50px_rgba(220,38,38,0.2)] backdrop-blur-md">
-        {{ errorMessage() }}
-      </div>
+  <div class="absolute top-8 w-full max-w-2xl px-4 z-[130]">
+    <div
+      class="bg-red-950/90 border border-red-500/40 text-red-200 px-5 py-3.5 rounded-2xl text-sm text-center shadow-[0_20px_50px_rgba(220,38,38,0.2)] backdrop-blur-md">
+      {{ errorMessage() }}
     </div>
+  </div>
   }
 
   <!-- Toast Notification -->
   @if (showSuccessToast()) {
-    <div class="absolute top-8 w-full max-w-md px-4 z-[140]">
-      <div class="px-5 py-3.5 flex items-center justify-center space-x-2.5 shadow-2xl backdrop-blur-md bg-teal-950/95 border border-teal-500/30 text-teal-200 rounded-2xl text-sm font-medium">
-        <mat-icon class="!w-[20px] !h-[20px] !text-[20px] text-teal-400">check_circle</mat-icon>
-        <span>{{ successMessage() }}</span>
-      </div>
+  <div class="absolute top-8 w-full max-w-md px-4 z-[140]">
+    <div
+      class="px-5 py-3.5 flex items-center justify-center space-x-2.5 shadow-2xl backdrop-blur-md bg-teal-950/95 border border-teal-500/30 text-teal-200 rounded-2xl text-sm font-medium">
+      <mat-icon class="!w-[20px] !h-[20px] !text-[20px] text-teal-400">check_circle</mat-icon>
+      <span>{{ successMessage() }}</span>
     </div>
+  </div>
   }
 
   <!-- MAIN SCREEN RECORDER WORKSPACE FRAME -->
   <div class="relative flex flex-col items-center justify-center w-full max-w-7xl z-10 -translate-y-4">
-    
+
     <!-- Sizing Area Wrapper -->
-    <div 
+    <div id="recordingFrame"
       class="relative border border-slate-700/60 rounded-2xl overflow-hidden bg-slate-950/60 transition-all duration-300 shadow-[0_30px_100px_rgba(0,0,0,0.85)] flex items-center justify-center"
-      [class.pulse-border-recording]="isRecording()"
-      [style.width.px]="frameWidth()"
-      [style.height.px]="frameHeight()"
-      [style.maxWidth]="'100%'"
-      [style.maxHeight]="'65vh'"
-      [style.aspectRatio]="'16/9'"
-      (click)="handleFrameClick($event)"
-    >
-      
+      [class.pulse-border-recording]="isRecording()" [style.width.px]="frameWidth()" [style.height.px]="frameHeight()"
+      [style.maxWidth]="'100%'" [style.maxHeight]="'65vh'" [style.aspectRatio]="'16/9'"
+      (click)="handleFrameClick($event)">
+
       <!-- Workspace Background Grid -->
-      <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none"></div>
-      
+      <div
+        class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none">
+      </div>
+
       <!-- ScreenPal Dotted Guide Border -->
       <div class="absolute inset-0 border-2 border-dashed border-slate-700/40 rounded-2xl pointer-events-none z-30"
-           [class.!border-blue-500/70]="isRecording()"></div>
-      
+        [class.!border-blue-500/70]="isRecording()"></div>
+
       <!-- Sizing Frame Corner Brackets -->
       <div class="corner-bracket corner-top-left"></div>
       <div class="corner-bracket corner-top-right"></div>
@@ -59,7 +59,8 @@
       <div class="corner-bracket corner-bottom-right"></div>
 
       <!-- Top-left sizing info badge -->
-      <div class="absolute top-3 left-3 bg-slate-950/90 border border-slate-800/80 px-2.5 py-1 rounded-md text-[10px] text-slate-400 font-mono z-40 shadow-lg select-none">
+      <div
+        class="absolute top-3 left-3 bg-slate-950/90 border border-slate-800/80 px-2.5 py-1 rounded-md text-[10px] text-slate-400 font-mono z-40 shadow-lg select-none">
         <span class="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5 animate-pulse"></span>
         Screen: {{ frameWidth() }} x {{ frameHeight() }}
       </div>
@@ -72,211 +73,141 @@
 
       <!-- Shared Screen Live Preview -->
       @if (screenShareStream()) {
-        <video 
-          [srcObject]="screenShareStream()"
-          autoplay 
-          muted 
-          playsinline 
-          class="absolute inset-0 w-full h-full object-contain z-10 transition-transform duration-300 pointer-events-none"
-          [style.transformOrigin]="(zoomCenter().x * 100) + '% ' + (zoomCenter().y * 100) + '%'"
-          [style.transform]="'scale(' + zoomScale() + ')'"
-        ></video>
+      <video [srcObject]="screenShareStream()" autoplay muted playsinline
+        class="absolute inset-0 w-full h-full object-contain z-10 transition-transform duration-300 pointer-events-none"
+        [style.transformOrigin]="(zoomCenter().x * 100) + '% ' + (zoomCenter().y * 100) + '%'"
+        [style.transform]="'scale(' + zoomScale() + ')'"></video>
       }
 
-      <!-- CAMERA PIP DRAWER (Visible inside the frame bounds) -->
-      @if (isCameraEnabled() && cameraStream()) {
-        <div 
-          class="absolute z-40 rounded-full overflow-hidden shadow-2xl bg-slate-900 border-2 flex items-center justify-center cursor-move group select-none transition-all duration-75"
-          [style.left.px]="cameraPos().x"
-          [style.top.px]="cameraPos().y"
-          [style.width.px]="cameraSize()"
-          [style.height.px]="cameraSize()"
-          [style.borderColor]="borderColor()"
-          appDraggableCamera
-          [cameraSize]="cameraSize()"
-          [cameraPos]="cameraPos()"
-          [isRecording]="isRecording()"
-          [isCountingDown]="isCountingDown()"
-          [cachedWindowWidth]="frameWidth()"
-          [cachedWindowHeight]="frameHeight()"
-          (positionChange)="cameraPos.set($event)"
-          (draggingStateChange)="isDraggingCam.set($event)"
-        >
-          <video id="camPreview" autoplay playsinline class="w-full h-full object-cover transform scale-x-[-1] pointer-events-none"></video>
-          
-          <!-- Reposition helper grid trigger icon -->
-          @if (!isRecording() && !isCountingDown()) {
-            <div class="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all pointer-events-none rounded-full">
-              <mat-icon class="text-white !text-[24px] !w-[24px] !h-[24px]">open_with</mat-icon>
-            </div>
-          }
-        </div>
-      }
 
       <!-- SCREENPAL DRAWING CANVAS OVERLAY -->
-      <canvas 
-        id="drawingCanvas" 
-        [width]="frameWidth()" 
-        [height]="frameHeight()" 
-        class="absolute inset-0 w-full h-full z-45"
-        [class.pointer-events-none]="!isDrawingMode()"
+      <canvas id="drawingCanvas" [width]="frameWidth()" [height]="frameHeight()"
+        class="absolute inset-0 w-full h-full z-45" [class.pointer-events-none]="!isDrawingMode()"
         [class.pointer-events-auto]="isDrawingMode()"
         [class.pencil-cursor]="isDrawingMode() && currentDrawTool() === 'pencil'"
-        [class.eraser-cursor]="isDrawingMode() && currentDrawTool() === 'eraser'"
-        (mousedown)="startDrawing($event)"
-        (mousemove)="draw($event)"
-        (mouseup)="stopDrawing()"
-        (mouseleave)="stopDrawing()"
-        (touchstart)="startDrawingTouch($event)"
-        (touchmove)="drawTouch($event)"
-        (touchend)="stopDrawing()"
-      ></canvas>
+        [class.eraser-cursor]="isDrawingMode() && currentDrawTool() === 'eraser'" (mousedown)="startDrawing($event)"
+        (mousemove)="draw($event)" (mouseup)="stopDrawing()" (mouseleave)="stopDrawing()"
+        (touchstart)="startDrawingTouch($event)" (touchmove)="drawTouch($event)" (touchend)="stopDrawing()"></canvas>
 
       <!-- ZOOM HELPER OVERLAY -->
       @if (isZoomMode() && zoomScale() === 1.0) {
-        <div class="absolute inset-0 bg-blue-500/[0.04] backdrop-blur-[1px] flex items-center justify-center z-50 pointer-events-none select-none">
-          <div class="bg-slate-950/90 px-4 py-2.5 rounded-xl border border-blue-500/30 text-blue-200 text-xs font-medium animate-pulse flex items-center gap-2 shadow-2xl">
-            <mat-icon class="!text-[16px] !w-[16px] !h-[16px] text-blue-400">zoom_in</mat-icon>
-            <span>Click inside the frame to Zoom (2x)</span>
-          </div>
+      <div
+        class="absolute inset-0 bg-blue-500/[0.04] backdrop-blur-[1px] flex items-center justify-center z-50 pointer-events-none select-none">
+        <div
+          class="bg-slate-950/90 px-4 py-2.5 rounded-xl border border-blue-500/30 text-blue-200 text-xs font-medium animate-pulse flex items-center gap-2 shadow-2xl">
+          <mat-icon class="!text-[16px] !w-[16px] !h-[16px] text-blue-400">zoom_in</mat-icon>
+          <span>Click inside the frame to Zoom (2x)</span>
         </div>
+      </div>
       }
 
       <!-- 3X3 WEBCAM SNAPPING SECTOR GRID -->
       @if (showPipGrid() && isCameraEnabled()) {
-        <div class="absolute inset-0 bg-slate-950/75 grid grid-cols-3 grid-rows-3 gap-2.5 p-3.5 z-[85] rounded-2xl animate-fade-in">
-          @for (pos of presetPositions; track pos.name) {
-            <div 
-              (click)="setWebcamPresetPosition(pos.name)"
-              class="border border-dashed border-white/20 hover:border-blue-500 hover:bg-blue-500/10 rounded-xl transition-all cursor-pointer flex items-center justify-center text-slate-400 hover:text-white font-mono text-[10px] tracking-wide"
-            >
-              {{ pos.label }}
-            </div>
-          }
+      <div
+        class="absolute inset-0 bg-slate-950/75 grid grid-cols-3 grid-rows-3 gap-2.5 p-3.5 z-[85] rounded-2xl animate-fade-in">
+        @for (pos of presetPositions; track pos.name) {
+        <div (click)="setWebcamPresetPosition(pos.name)"
+          class="border border-dashed border-white/20 hover:border-blue-500 hover:bg-blue-500/10 rounded-xl transition-all cursor-pointer flex items-center justify-center text-slate-400 hover:text-white font-mono text-[10px] tracking-wide">
+          {{ pos.label }}
         </div>
+        }
+      </div>
       }
 
       <!-- COUNTDOWN OVERLAY COMPONENT -->
       @if (isCountingDown()) {
-        <app-countdown-overlay
-          [countdownValue]="countdownValue()"
-          [uiMode]="uiMode()"
-          (cancelRecording)="stopRecording()"
-        ></app-countdown-overlay>
+      <app-countdown-overlay [countdownValue]="countdownValue()" [uiMode]="uiMode()"
+        (cancelRecording)="stopRecording()"></app-countdown-overlay>
       }
 
     </div>
 
     <!-- BOTTOM FLOATING CONTROLS WRAPPER -->
     <div class="mt-4 flex flex-col items-center gap-3 w-full max-w-xl">
-      
+
       <!-- 1. FLOATING DRAWING PALETTE (Appears above main control bar when Drawing Mode active) -->
       @if (isDrawingMode()) {
-        <div class="glass-panel px-4 py-3 rounded-2xl flex items-center gap-4 transition-all duration-300 w-full justify-between shadow-2xl animate-[slideUp_0.2s_ease-out]">
-          
-          <!-- Tool: Pencil / Eraser -->
-          <div class="flex items-center gap-1 bg-slate-950/50 p-0.5 rounded-xl border border-slate-800">
-            <button 
-              (click)="currentDrawTool.set('pencil')"
-              class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
-              [class.bg-blue-600]="currentDrawTool() === 'pencil'"
-              [class.text-white]="currentDrawTool() === 'pencil'"
-              [class.text-slate-400]="currentDrawTool() !== 'pencil'"
-              [class.hover:text-white]="currentDrawTool() !== 'pencil'"
-            >
-              <mat-icon class="!text-[14px] !w-[14px] !h-[14px]">edit</mat-icon>
-              <span>Vẽ</span>
-            </button>
-            <button 
-              (click)="currentDrawTool.set('eraser')"
-              class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
-              [class.bg-blue-600]="currentDrawTool() === 'eraser'"
-              [class.text-white]="currentDrawTool() === 'eraser'"
-              [class.text-slate-400]="currentDrawTool() !== 'eraser'"
-              [class.hover:text-white]="currentDrawTool() !== 'eraser'"
-            >
-              <mat-icon class="!text-[14px] !w-[14px] !h-[14px]">auto_fix_normal</mat-icon>
-              <span>Tẩy</span>
-            </button>
-          </div>
+      <div
+        class="glass-panel px-4 py-3 rounded-2xl flex items-center gap-4 transition-all duration-300 w-full justify-between shadow-2xl animate-[slideUp_0.2s_ease-out]">
 
-          <!-- Brush Size Selector -->
-          <div class="flex items-center gap-1.5">
-            <button 
-              (click)="currentBrushSize.set(3)"
-              class="w-7 h-7 rounded-full flex items-center justify-center border transition-all cursor-pointer"
-              [class.border-blue-500]="currentBrushSize() === 3"
-              [class.bg-blue-500/10]="currentBrushSize() === 3"
-              [class.border-slate-800]="currentBrushSize() !== 3"
-              title="Cọ Nhỏ"
-            >
-              <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
-            </button>
-            <button 
-              (click)="currentBrushSize.set(6)"
-              class="w-7 h-7 rounded-full flex items-center justify-center border transition-all cursor-pointer"
-              [class.border-blue-500]="currentBrushSize() === 6"
-              [class.bg-blue-500/10]="currentBrushSize() === 6"
-              [class.border-slate-800]="currentBrushSize() !== 6"
-              title="Cọ Vừa"
-            >
-              <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
-            </button>
-            <button 
-              (click)="currentBrushSize.set(12)"
-              class="w-7 h-7 rounded-full flex items-center justify-center border transition-all cursor-pointer"
-              [class.border-blue-500]="currentBrushSize() === 12"
-              [class.bg-blue-500/10]="currentBrushSize() === 12"
-              [class.border-slate-800]="currentBrushSize() !== 12"
-              title="Cọ Lớn"
-            >
-              <div class="w-4 h-4 rounded-full bg-white"></div>
-            </button>
-          </div>
-
-          <!-- Colors Circles list -->
-          <div class="flex items-center gap-1 max-w-[200px] overflow-x-auto py-1 scrollbar-none">
-            @for (color of drawingColors; track color) {
-              <button 
-                (click)="currentDrawColor.set(color)"
-                class="w-5 h-5 rounded-full shrink-0 border border-black/30 transition-all transform hover:scale-110 cursor-pointer"
-                [style.backgroundColor]="color"
-                [class.ring-2]="currentDrawColor() === color"
-                [class.ring-blue-500]="currentDrawColor() === color"
-                [class.scale-110]="currentDrawColor() === color"
-              ></button>
-            }
-          </div>
-
-          <!-- Clear canvas button -->
-          <button 
-            (click)="clearCanvas()"
-            class="p-1.5 rounded-xl hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-all cursor-pointer flex items-center justify-center"
-            title="Xóa tất cả vẽ"
-          >
-            <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">delete_sweep</mat-icon>
+        <!-- Tool: Pencil / Eraser -->
+        <div class="flex items-center gap-1 bg-slate-950/50 p-0.5 rounded-xl border border-slate-800">
+          <button (click)="currentDrawTool.set('pencil')"
+            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+            [class.bg-blue-600]="currentDrawTool() === 'pencil'" [class.text-white]="currentDrawTool() === 'pencil'"
+            [class.text-slate-400]="currentDrawTool() !== 'pencil'"
+            [class.hover:text-white]="currentDrawTool() !== 'pencil'">
+            <mat-icon class="!text-[14px] !w-[14px] !h-[14px]">edit</mat-icon>
+            <span>Vẽ</span>
+          </button>
+          <button (click)="currentDrawTool.set('eraser')"
+            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+            [class.bg-blue-600]="currentDrawTool() === 'eraser'" [class.text-white]="currentDrawTool() === 'eraser'"
+            [class.text-slate-400]="currentDrawTool() !== 'eraser'"
+            [class.hover:text-white]="currentDrawTool() !== 'eraser'">
+            <mat-icon class="!text-[14px] !w-[14px] !h-[14px]">auto_fix_normal</mat-icon>
+            <span>Tẩy</span>
           </button>
         </div>
+
+        <!-- Brush Size Selector -->
+        <div class="flex items-center gap-1.5">
+          <button (click)="currentBrushSize.set(3)"
+            class="w-7 h-7 rounded-full flex items-center justify-center border transition-all cursor-pointer"
+            [class.border-blue-500]="currentBrushSize() === 3" [class.bg-blue-500/10]="currentBrushSize() === 3"
+            [class.border-slate-800]="currentBrushSize() !== 3" title="Cọ Nhỏ">
+            <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+          </button>
+          <button (click)="currentBrushSize.set(6)"
+            class="w-7 h-7 rounded-full flex items-center justify-center border transition-all cursor-pointer"
+            [class.border-blue-500]="currentBrushSize() === 6" [class.bg-blue-500/10]="currentBrushSize() === 6"
+            [class.border-slate-800]="currentBrushSize() !== 6" title="Cọ Vừa">
+            <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+          </button>
+          <button (click)="currentBrushSize.set(12)"
+            class="w-7 h-7 rounded-full flex items-center justify-center border transition-all cursor-pointer"
+            [class.border-blue-500]="currentBrushSize() === 12" [class.bg-blue-500/10]="currentBrushSize() === 12"
+            [class.border-slate-800]="currentBrushSize() !== 12" title="Cọ Lớn">
+            <div class="w-4 h-4 rounded-full bg-white"></div>
+          </button>
+        </div>
+
+        <!-- Colors Circles list -->
+        <div class="flex items-center gap-1 max-w-[200px] overflow-x-auto py-1 scrollbar-none">
+          @for (color of drawingColors; track color) {
+          <button (click)="currentDrawColor.set(color)"
+            class="w-5 h-5 rounded-full shrink-0 border border-black/30 transition-all transform hover:scale-110 cursor-pointer"
+            [style.backgroundColor]="color" [class.ring-2]="currentDrawColor() === color"
+            [class.ring-blue-500]="currentDrawColor() === color"
+            [class.scale-110]="currentDrawColor() === color"></button>
+          }
+        </div>
+
+        <!-- Clear canvas button -->
+        <button (click)="clearCanvas()"
+          class="p-1.5 rounded-xl hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-all cursor-pointer flex items-center justify-center"
+          title="Xóa tất cả vẽ">
+          <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">delete_sweep</mat-icon>
+        </button>
+      </div>
       }
 
       <!-- 2. MAIN FLOATING CONTROL BAR -->
       <div class="glass-panel px-4 py-2.5 rounded-2xl flex items-center justify-between w-full shadow-2xl">
-        
+
         <!-- Left Section: Record Button & Timer -->
         <div class="flex items-center gap-3">
           <!-- Record Button -->
-          <button 
-            (click)="toggleRecording()"
+          <button (click)="toggleRecording()"
             class="group relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 focus:outline-none cursor-pointer overflow-hidden"
-            [attr.title]="isRecording() ? lang.translations().STOP_RECORDING_TITLE : lang.translations().START_RECORDING_TITLE"
-          >
+            [attr.title]="isRecording() ? lang.translations().STOP_RECORDING_TITLE : lang.translations().START_RECORDING_TITLE">
             <!-- Background circles based on recording state -->
             @if (isRecording() || isCountingDown()) {
-              <div class="absolute inset-0 bg-[#E11D48] animate-pulse"></div>
-              <mat-icon class="relative z-10 text-white !text-[20px] !w-[20px] !h-[20px]">pause</mat-icon>
+            <div class="absolute inset-0 bg-[#E11D48] animate-pulse"></div>
+            <mat-icon class="relative z-10 text-white !text-[20px] !w-[20px] !h-[20px]">pause</mat-icon>
             } @else {
-              <div class="absolute inset-0 bg-red-600 group-hover:bg-red-500 transition-colors"></div>
-              <div class="absolute w-3.5 h-3.5 bg-white rounded-full transition-transform group-hover:scale-90"></div>
+            <div class="absolute inset-0 bg-red-600 group-hover:bg-red-500 transition-colors"></div>
+            <div class="absolute w-3.5 h-3.5 bg-white rounded-full transition-transform group-hover:scale-90"></div>
             }
           </button>
 
@@ -290,90 +221,64 @@
 
         <!-- Middle Section: Mic, Cam PIP, Zoom, Draw, Settings -->
         <div class="flex items-center gap-3">
-          
+
           <!-- Mic Toggle + Soundwave -->
           <div class="flex items-center gap-2 bg-slate-950/40 px-2.5 py-1 rounded-xl border border-slate-800/80">
-            <button 
-              (click)="toggleMute()"
-              [disabled]="isCountingDown()"
+            <button (click)="toggleMute()" [disabled]="isCountingDown()"
               class="text-slate-400 hover:text-slate-200 transition-colors cursor-pointer flex items-center justify-center p-1"
-              [class.!text-red-500]="isMuted()"
-              [class.!text-blue-400]="!isMuted() && isRecording()"
-              title="Bật/Tắt Micro"
-            >
+              [class.!text-red-500]="isMuted()" [class.!text-blue-400]="!isMuted() && isRecording()"
+              title="Bật/Tắt Micro">
               <mat-icon class="!text-[20px] !w-[20px] !h-[20px]">{{ isMuted() ? 'mic_off' : 'mic' }}</mat-icon>
             </button>
-            
+
             <!-- Real-time dynamic sound wave level visualizer -->
             <div class="flex items-end justify-center space-x-0.5 h-4 w-[36px]">
               @for (level of audioLevels(); track $index) {
-                <div 
-                  class="audio-bar"
-                  [class.!bg-red-500]="isMuted()"
-                  [class.!bg-blue-500]="isRecording() && !isMuted()"
-                  [style.height]="isMuted() ? '2px' : (level * 0.15) + 'px'"
-                ></div>
+              <div class="audio-bar" [class.!bg-red-500]="isMuted()" [class.!bg-blue-500]="isRecording() && !isMuted()"
+                [style.height]="isMuted() ? '2px' : (level * 0.15) + 'px'"></div>
               }
             </div>
           </div>
 
           <!-- Camera PIP Toggle -->
           <div class="flex items-center bg-slate-950/40 p-0.5 rounded-xl border border-slate-800/80">
-            <button 
-              (click)="toggleCamera()"
-              [disabled]="isCountingDown()"
+            <button (click)="toggleCamera()" [disabled]="isCountingDown()"
               class="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition-all cursor-pointer flex items-center justify-center"
-              [class.!text-blue-400]="isCameraEnabled()"
-              [class.bg-slate-800]="isCameraEnabled()"
-              title="Bật/Tắt Webcam"
-            >
-              <mat-icon class="!text-[20px] !w-[20px] !h-[20px]">{{ isCameraEnabled() ? 'videocam' : 'videocam_off' }}</mat-icon>
+              [class.!text-blue-400]="isCameraEnabled()" [class.bg-slate-800]="isCameraEnabled()"
+              title="Bật/Tắt Webcam">
+              <mat-icon class="!text-[20px] !w-[20px] !h-[20px]">{{ isCameraEnabled() ? 'videocam' : 'videocam_off'
+                }}</mat-icon>
             </button>
-            
+
             <!-- Positioning snap grid toggle -->
             @if (isCameraEnabled()) {
-              <button 
-                (click)="showPipGrid.set(!showPipGrid())"
-                class="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 transition-all cursor-pointer flex items-center justify-center"
-                [class.!text-blue-400]="showPipGrid()"
-                title="Chọn góc hiển thị Webcam"
-              >
-                <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">grid_view</mat-icon>
-              </button>
+            <button (click)="showPipGrid.set(!showPipGrid())"
+              class="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 transition-all cursor-pointer flex items-center justify-center"
+              [class.!text-blue-400]="showPipGrid()" title="Chọn góc hiển thị Webcam">
+              <mat-icon class="!text-[18px] !w-[18px] !h-[18px]">grid_view</mat-icon>
+            </button>
             }
           </div>
 
           <!-- Zoom Tool Toggle -->
-          <button 
-            (click)="isZoomMode.set(!isZoomMode()); isDrawingMode.set(false)"
-            [disabled]="isCountingDown()"
+          <button (click)="isZoomMode.set(!isZoomMode()); isDrawingMode.set(false)" [disabled]="isCountingDown()"
             class="p-2 rounded-xl text-slate-400 hover:text-slate-200 transition-all cursor-pointer flex items-center justify-center"
-            [class.bg-blue-600/20]="isZoomMode()"
-            [class.!text-blue-400]="isZoomMode()"
-            title="Thu phóng vùng (Zoom)"
-          >
+            [class.bg-blue-600/20]="isZoomMode()" [class.!text-blue-400]="isZoomMode()" title="Thu phóng vùng (Zoom)">
             <mat-icon class="!text-[20px] !w-[20px] !h-[20px]">search</mat-icon>
           </button>
 
           <!-- Drawing Tool Toggle -->
-          <button 
-            (click)="isDrawingMode.set(!isDrawingMode()); isZoomMode.set(false)"
-            [disabled]="isCountingDown()"
+          <button (click)="isDrawingMode.set(!isDrawingMode()); isZoomMode.set(false)" [disabled]="isCountingDown()"
             class="p-2 rounded-xl text-slate-400 hover:text-slate-200 transition-all cursor-pointer flex items-center justify-center"
-            [class.bg-blue-600/20]="isDrawingMode()"
-            [class.!text-blue-400]="isDrawingMode()"
-            title="Vẽ màn hình (Draw)"
-          >
+            [class.bg-blue-600/20]="isDrawingMode()" [class.!text-blue-400]="isDrawingMode()"
+            title="Vẽ màn hình (Draw)">
             <mat-icon class="!text-[20px] !w-[20px] !h-[20px]">brush</mat-icon>
           </button>
 
           <!-- Settings/Effects Button -->
-          <button 
-            (click)="openSettingsModal()"
-            [disabled]="isRecording() || isCountingDown()"
+          <button (click)="openSettingsModal()" [disabled]="isRecording() || isCountingDown()"
             class="p-2 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all cursor-pointer flex items-center justify-center"
-            title="Cài đặt chất lượng"
-          >
+            title="Cài đặt chất lượng">
             <mat-icon class="!text-[20px] !w-[20px] !h-[20px]">tune</mat-icon>
           </button>
         </div>
@@ -382,29 +287,22 @@
 
         <!-- Right Section: Restart, Done / Cancel -->
         <div class="flex items-center gap-2">
-          
+
           <!-- Restart Recording (Trashbin) -->
           @if (isRecording() || recordingTime() > 0) {
-            <button 
-              (click)="stopRecording(); clearCanvas(); resetZoom()"
-              class="p-2 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all cursor-pointer flex items-center justify-center"
-              title="Xóa nháp và ghi lại"
-            >
-              <mat-icon class="!text-[20px] !w-[20px] !h-[20px]">refresh</mat-icon>
-            </button>
+          <button (click)="stopRecording(); clearCanvas(); resetZoom()"
+            class="p-2 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all cursor-pointer flex items-center justify-center"
+            title="Xóa nháp và ghi lại">
+            <mat-icon class="!text-[20px] !w-[20px] !h-[20px]">refresh</mat-icon>
+          </button>
           }
 
           <!-- Done / Cancel Text Button -->
-          <button 
-            (click)="isRecording() ? stopRecording() : null"
+          <button (click)="isRecording() ? stopRecording() : null"
             class="px-4 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer"
-            [class.border-blue-500]="isRecording()"
-            [class.text-blue-400]="isRecording()"
-            [class.hover:bg-blue-500/10]="isRecording()"
-            [class.border-slate-700]="!isRecording()"
-            [class.text-slate-400]="!isRecording()"
-            [class.hover:bg-slate-800/50]="!isRecording()"
-          >
+            [class.border-blue-500]="isRecording()" [class.text-blue-400]="isRecording()"
+            [class.hover:bg-blue-500/10]="isRecording()" [class.border-slate-700]="!isRecording()"
+            [class.text-slate-400]="!isRecording()" [class.hover:bg-slate-800/50]="!isRecording()">
             {{ isRecording() ? 'Done' : 'Cancel' }}
           </button>
         </div>
@@ -416,28 +314,44 @@
   </div>
 
   <!-- Footer Info -->
-  <app-footer 
-    [uiMode]="uiMode()" 
-    [version]="version" 
-    (openSettings)="openSettingsModal()" 
+  <app-footer [uiMode]="uiMode()" [version]="version" (openSettings)="openSettingsModal()"
     (openGuide)="showGuideModal.set(true)">
   </app-footer>
 
   <!-- User Guide Modal Component -->
   <app-guide-modal [(show)]="showGuideModal" [uiMode]="uiMode()"></app-guide-modal>
 
+  <!-- CAMERA PIP DRAWER (Relocated outside the preview frame, fixed positioning) -->
+  @if (isCameraEnabled() && cameraStream()) {
+  <div
+    class="fixed z-[120] overflow-hidden shadow-2xl bg-slate-900 border-2 flex items-center justify-center cursor-move group select-none transition-all duration-75 border-slate-700/60"
+    [class.rounded-full]="cameraShape() === 'circle'" [class.aspect-square]="cameraShape() === 'circle'"
+    [class.rounded-2xl]="cameraShape() === 'rectangle'" [class.aspect-video]="cameraShape() === 'rectangle'"
+    [style.left.px]="cameraPos().x" [style.top.px]="cameraPos().y" [style.width.px]="cameraSize()"
+    [style.height.px]="cameraShape() === 'circle' ? cameraSize() : (cameraSize() * 9 / 16)"
+    [style.borderColor]="borderColor()" appDraggableCamera [cameraSize]="cameraSize()" [cameraShape]="cameraShape()"
+    [cameraPos]="cameraPos()" [isRecording]="isRecording()" [isCountingDown]="isCountingDown()"
+    [cachedWindowWidth]="cachedWindowWidth" [cachedWindowHeight]="cachedWindowHeight"
+    (positionChange)="cameraPos.set($event)" (draggingStateChange)="isDraggingCam.set($event)">
+    <video id="camPreview" [srcObject]="cameraStream()" autoplay playsinline
+      class="w-full h-full object-cover transform scale-x-[-1] pointer-events-none"></video>
+
+    <!-- Reposition helper grid trigger icon -->
+    @if (!isRecording() && !isCountingDown()) {
+    <div
+      class="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all pointer-events-none"
+      [class.rounded-full]="cameraShape() === 'circle'" [class.rounded-2xl]="cameraShape() === 'rectangle'">
+      <mat-icon class="text-white !text-[24px] !w-[24px] !h-[24px]">open_with</mat-icon>
+    </div>
+    }
+  </div>
+  }
+
   <!-- Settings Modal Component -->
-  <app-settings-modal
-    [(show)]="showSettingsModal"
-    [(tempQualityPreset)]="tempQualityPreset"
-    [(tempCameraSize)]="tempCameraSize"
-    [(tempUiMode)]="tempUiMode"
-    [(tempFpsPreset)]="tempFpsPreset"
-    [(tempShowBorder)]="tempShowBorder"
-    [(tempBorderColor)]="tempBorderColor"
-    [(tempLanguage)]="tempLanguage"
-    (saveSettings)="saveSettings()"
-    (resetSettings)="resetToDefaultSettings()"
-  ></app-settings-modal>
+  <app-settings-modal [(show)]="showSettingsModal" [(tempQualityPreset)]="tempQualityPreset"
+    [(tempCameraSize)]="tempCameraSize" [(tempCameraShape)]="tempCameraShape" [(tempUiMode)]="tempUiMode"
+    [(tempFpsPreset)]="tempFpsPreset" [(tempShowBorder)]="tempShowBorder" [(tempBorderColor)]="tempBorderColor"
+    [(tempLanguage)]="tempLanguage" (saveSettings)="saveSettings()"
+    (resetSettings)="resetToDefaultSettings()"></app-settings-modal>
 
 </main>

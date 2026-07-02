@@ -406,6 +406,67 @@ import { LanguageService } from './language.service';
                   </div>
                 </div>
 
+                <!-- Camera Shape (Hình dạng Webcam) Card -->
+                <div class="bg-slate-950/50 border border-slate-800/80 rounded-xl p-4 md:p-5 space-y-3.5 shadow-inner">
+                  <h3 class="font-medium text-slate-200 select-none pb-2 border-b border-slate-800/50 flex items-center gap-2"
+                      [class.text-base]="tempUiMode() === 'enhanced'" [class.font-semibold]="tempUiMode() === 'enhanced'"
+                      [class.text-sm]="tempUiMode() !== 'enhanced'">
+                    <span class="w-1.5 h-1.5 rounded-full animate-[pulse_2s_infinite]"
+                          [class.bg-teal-500]="tempUiMode() !== 'enhanced'"
+                          [class.bg-amber-500]="tempUiMode() === 'enhanced'"></span>
+                    {{ getShapeTitle() }}
+                  </h3>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div (click)="tempCameraShape.set('circle')" class="flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors"
+                        [class.bg-slate-800]="tempCameraShape() === 'circle'" [class.border-teal-500]="tempUiMode() !== 'enhanced' && tempCameraShape() === 'circle'" [class.border-amber-500]="tempUiMode() === 'enhanced' && tempCameraShape() === 'circle'"
+                        [class.bg-slate-850/40]="tempCameraShape() !== 'circle'" [class.border-slate-800/70]="tempCameraShape() !== 'circle'"
+                        [class.hover:border-slate-650]="tempCameraShape() !== 'circle'">
+                      <div class="flex items-center gap-2">
+                        <mat-icon class="text-slate-400 shrink-0 !text-[18px] !w-[18px] !h-[18px]">lens</mat-icon>
+                        <span class="font-medium text-slate-200 select-none text-left"
+                             [class.text-base]="tempUiMode() === 'enhanced'"
+                             [class.text-sm]="tempUiMode() !== 'enhanced'">{{ getCircleText() }}</span>
+                      </div>
+                      <input type="radio" name="cameraShape" value="circle" [checked]="tempCameraShape() === 'circle'" class="sr-only pointer-events-none">
+                      @if (tempCameraShape() === 'circle') {
+                        <div class="rounded-full border-slate-900 shrink-0"
+                             [class.bg-teal-500]="tempUiMode() !== 'enhanced'" [class.shadow-[0_0_0_1px_rgba(20,184,166,1)]]="tempUiMode() !== 'enhanced'"
+                             [class.bg-amber-500]="tempUiMode() === 'enhanced'" [class.shadow-[0_0_0_1px_rgba(245,158,11,1)]]="tempUiMode() === 'enhanced'"
+                             [class.w-5]="tempUiMode() === 'enhanced'" [class.h-5]="tempUiMode() === 'enhanced'" [class.border-[4px]]="tempUiMode() === 'enhanced'"
+                             [class.w-4]="tempUiMode() !== 'enhanced'" [class.h-4]="tempUiMode() !== 'enhanced'" [class.border-[3px]]="tempUiMode() !== 'enhanced'"></div>
+                      } @else {
+                        <div class="rounded-full border border-slate-600 shrink-0 select-none"
+                             [class.w-5]="tempUiMode() === 'enhanced'" [class.h-5]="tempUiMode() === 'enhanced'"
+                             [class.w-4]="tempUiMode() !== 'enhanced'" [class.h-4]="tempUiMode() !== 'enhanced'"></div>
+                      }
+                    </div>
+
+                    <div (click)="tempCameraShape.set('rectangle')" class="flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors"
+                        [class.bg-slate-800]="tempCameraShape() === 'rectangle'" [class.border-teal-500]="tempUiMode() !== 'enhanced' && tempCameraShape() === 'rectangle'" [class.border-amber-500]="tempUiMode() === 'enhanced' && tempCameraShape() === 'rectangle'"
+                        [class.bg-slate-850/40]="tempCameraShape() !== 'rectangle'" [class.border-slate-800/70]="tempCameraShape() !== 'rectangle'"
+                        [class.hover:border-slate-650]="tempCameraShape() !== 'rectangle'">
+                      <div class="flex items-center gap-2">
+                        <mat-icon class="text-slate-400 shrink-0 !text-[18px] !w-[18px] !h-[18px]">crop_landscape</mat-icon>
+                        <span class="font-medium text-slate-200 select-none text-left"
+                             [class.text-base]="tempUiMode() === 'enhanced'"
+                             [class.text-sm]="tempUiMode() !== 'enhanced'">{{ getRectangleText() }}</span>
+                      </div>
+                      <input type="radio" name="cameraShape" value="rectangle" [checked]="tempCameraShape() === 'rectangle'" class="sr-only pointer-events-none">
+                      @if (tempCameraShape() === 'rectangle') {
+                        <div class="rounded-full border-slate-900 shrink-0"
+                             [class.bg-teal-500]="tempUiMode() !== 'enhanced'" [class.shadow-[0_0_0_1px_rgba(20,184,166,1)]]="tempUiMode() !== 'enhanced'"
+                             [class.bg-amber-500]="tempUiMode() === 'enhanced'" [class.shadow-[0_0_0_1px_rgba(245,158,11,1)]]="tempUiMode() === 'enhanced'"
+                             [class.w-5]="tempUiMode() === 'enhanced'" [class.h-5]="tempUiMode() === 'enhanced'" [class.border-[4px]]="tempUiMode() === 'enhanced'"
+                             [class.w-4]="tempUiMode() !== 'enhanced'" [class.h-4]="tempUiMode() !== 'enhanced'" [class.border-[3px]]="tempUiMode() !== 'enhanced'"></div>
+                      } @else {
+                        <div class="rounded-full border border-slate-600 shrink-0 select-none"
+                             [class.w-5]="tempUiMode() === 'enhanced'" [class.h-5]="tempUiMode() === 'enhanced'"
+                             [class.w-4]="tempUiMode() !== 'enhanced'" [class.h-4]="tempUiMode() !== 'enhanced'"></div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Language Selection Card -->
                 <div class="bg-slate-950/50 border border-slate-800/80 rounded-xl p-4 md:p-5 space-y-3.5 shadow-inner">
                   <h3 class="font-medium text-slate-200 select-none pb-2 border-b border-slate-800/50 flex items-center gap-2"
@@ -498,6 +559,7 @@ export class SettingsModal {
   tempShowBorder = model<boolean>(false);
   tempBorderColor = model<string>('#14b8a6');
   tempLanguage = model<'vi' | 'en'>('vi');
+  tempCameraShape = model<'circle' | 'rectangle'>('circle');
 
   saveSettings = output<void>();
   resetSettings = output<void>();
@@ -543,6 +605,18 @@ export class SettingsModal {
 
   setLanguage(langCode: 'vi' | 'en') {
     this.tempLanguage.set(langCode);
+  }
+
+  getShapeTitle() {
+    return this.lang.currentLanguage() === 'vi' ? 'Hình dạng Webcam' : 'Camera Shape';
+  }
+
+  getCircleText() {
+    return this.lang.currentLanguage() === 'vi' ? 'Hình Tròn' : 'Circle';
+  }
+
+  getRectangleText() {
+    return this.lang.currentLanguage() === 'vi' ? 'Hình Chữ Nhật' : 'Rectangle';
   }
 
   updateCameraSize(event: Event) {

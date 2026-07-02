@@ -4,6 +4,7 @@ export interface CameraOverlayConfig {
   isCameraEnabled: boolean;
   cameraPos: { x: number; y: number };
   cameraSize: number;
+  cameraShape?: 'circle' | 'rectangle';
   windowWidth: number;
   windowHeight: number;
   showBorder?: boolean;
@@ -38,7 +39,7 @@ export class CanvasMixer {
         canvasCtx.drawImage(displayVideo, 0, 0, canvasEle.width, canvasEle.height);
       }
 
-      // 2. Overlay camera circle if enabled and ready
+      // 2. Overlay camera shape if enabled and ready
       if (config.isCameraEnabled && camVideoEl && camVideoEl.readyState >= 2) {
         const windowW = config.windowWidth || APP_CONFIG.CONSTRAINTS.MAX_RESOLUTION;
         const windowH = config.windowHeight || 1080;
@@ -48,13 +49,18 @@ export class CanvasMixer {
         
         // Để camera tỉ lệ thuận với màn hình mà không bị méo hoặc quá to
         const scale = Math.min(scaleX, scaleY);
-        const targetSize = config.cameraSize * scale;
-        const camRadius = targetSize / 2;
+        
+        const isCircle = (config.cameraShape || 'circle') === 'circle';
+        const targetW = config.cameraSize * scale;
+        const targetH = isCircle ? targetW : (targetW * 9 / 16);
+        const camRadius = targetW / 2;
 
         const leftPadding = config.cameraPos.x;
         const rightPadding = windowW - (config.cameraPos.x + config.cameraSize);
         const topPadding = config.cameraPos.y;
-        const bottomPadding = windowH - (config.cameraPos.y + config.cameraSize);
+        
+        const logicalCamH = isCircle ? config.cameraSize : (config.cameraSize * 9 / 16);
+        const bottomPadding = windowH - (config.cameraPos.y + logicalCamH);
 
         let x = 0;
         let y = 0;
@@ -63,22 +69,31 @@ export class CanvasMixer {
         if (leftPadding < rightPadding) {
             x = leftPadding * scale;
         } else {
-            x = canvasEle.width - (rightPadding * scale) - targetSize;
+            x = canvasEle.width - (rightPadding * scale) - targetW;
         }
 
         if (topPadding < bottomPadding) {
             y = topPadding * scale;
         } else {
-            y = canvasEle.height - (bottomPadding * scale) - targetSize;
+            y = canvasEle.height - (bottomPadding * scale) - targetH;
         }
 
         // Clamp một lần nữa để chắc chắn camera không bị văng ra khỏi map khi scale có sai số
-        x = Math.max(0, Math.min(x, canvasEle.width - targetSize));
-        y = Math.max(0, Math.min(y, canvasEle.height - targetSize));
+        x = Math.max(0, Math.min(x, canvasEle.width - targetW));
+        y = Math.max(0, Math.min(y, canvasEle.height - targetH));
 
         canvasCtx.save();
         canvasCtx.beginPath();
-        canvasCtx.arc(x + camRadius, y + camRadius, camRadius, 0, Math.PI * 2);
+        if (isCircle) {
+            canvasCtx.arc(x + camRadius, y + camRadius, camRadius, 0, Math.PI * 2);
+        } else {
+            const borderRadius = 12 * scale;
+            if (typeof canvasCtx.roundRect === 'function') {
+                canvasCtx.roundRect(x, y, targetW, targetH, borderRadius);
+            } else {
+                canvasCtx.rect(x, y, targetW, targetH);
+            }
+        }
         canvasCtx.closePath();
         canvasCtx.clip();
 
@@ -88,16 +103,27 @@ export class CanvasMixer {
         let sW = vW;
         let sH = vH;
 
-        if (aspect > 1) {
-          sW = vH; // crop horizontal sides
+        if (isCircle) {
+            // Circle crop (1:1 ratio)
+            if (aspect > 1) {
+              sW = vH;
+            } else {
+              sH = vW;
+            }
         } else {
-          sH = vW; // crop vertical sides
+            // Rectangle crop (16:9 ratio)
+            const targetAspect = 16 / 9;
+            if (aspect > targetAspect) {
+              sW = vH * targetAspect;
+            } else {
+              sH = vW / targetAspect;
+            }
         }
 
         // Mirror camera preview
-        canvasCtx.translate(x + targetSize / 2, y + targetSize / 2);
+        canvasCtx.translate(x + targetW / 2, y + targetH / 2);
         canvasCtx.scale(-1, 1);
-        canvasCtx.translate(-(x + targetSize / 2), -(y + targetSize / 2));
+        canvasCtx.translate(-(x + targetW / 2), -(y + targetH / 2));
 
         canvasCtx.drawImage(
           camVideoEl,
@@ -107,17 +133,26 @@ export class CanvasMixer {
           sH,
           x,
           y,
-          targetSize,
-          targetSize
+          targetW,
+          targetH
         );
 
         canvasCtx.restore();
 
-        // Stroke rounded circle boundary (only if showBorder is enabled)
+        // Stroke rounded boundary (only if showBorder is enabled)
         if (config.showBorder) {
           canvasCtx.save();
           canvasCtx.beginPath();
-          canvasCtx.arc(x + camRadius, y + camRadius, camRadius, 0, Math.PI * 2);
+          if (isCircle) {
+            canvasCtx.arc(x + camRadius, y + camRadius, camRadius, 0, Math.PI * 2);
+          } else {
+            const borderRadius = 12 * scale;
+            if (typeof canvasCtx.roundRect === 'function') {
+                canvasCtx.roundRect(x, y, targetW, targetH, borderRadius);
+            } else {
+                canvasCtx.rect(x, y, targetW, targetH);
+            }
+          }
           canvasCtx.lineWidth = 2 * scale;
           canvasCtx.strokeStyle = config.borderColor || 'rgba(16, 185, 129, 0.8)';
           canvasCtx.stroke();

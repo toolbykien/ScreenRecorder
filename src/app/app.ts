@@ -47,6 +47,8 @@ export class App implements OnDestroy, OnInit {
   // ScreenPal size settings (defaults to 1248 x 702 or URL params)
   frameWidth = signal(1248);
   frameHeight = signal(702);
+  private defaultWidth = 1248;
+  private defaultHeight = 702;
 
   // ScreenPal camera PIP positioning grid state
   showPipGrid = signal(false);
@@ -117,6 +119,8 @@ export class App implements OnDestroy, OnInit {
   borderColor = this.settingsService.borderColor;
   tempBorderColor = this.settingsService.tempBorderColor;
   tempLanguage = this.settingsService.tempLanguage;
+  cameraShape = this.settingsService.cameraShape;
+  tempCameraShape = this.settingsService.tempCameraShape;
   showSettingsModal = signal(false);
 
   hasMicDevice = this.deviceDetector.hasMicDevice;
@@ -150,6 +154,35 @@ export class App implements OnDestroy, OnInit {
     });
     effect(() => {
       this.recordingService.zoomCenter.set(this.zoomCenter());
+    });
+    effect(() => {
+      this.recordingService.cameraShape.set(this.cameraShape());
+    });
+
+    // Auto-update frame size based on screen share stream resolution to keep preview in perfect fit
+    effect(() => {
+      const stream = this.screenShareStream();
+      if (stream) {
+        const track = stream.getVideoTracks()[0];
+        if (track) {
+          const updateSize = () => {
+            const settings = track.getSettings();
+            if (settings.width && settings.height) {
+              this.frameWidth.set(settings.width);
+              this.frameHeight.set(settings.height);
+            }
+          };
+          updateSize();
+          
+          track.onended = () => {
+            this.frameWidth.set(this.defaultWidth);
+            this.frameHeight.set(this.defaultHeight);
+          };
+        }
+      } else {
+        this.frameWidth.set(this.defaultWidth);
+        this.frameHeight.set(this.defaultHeight);
+      }
     });
   }
 
@@ -192,19 +225,26 @@ export class App implements OnDestroy, OnInit {
 
   async ngOnInit() {
       if (typeof window !== 'undefined') {
-          this.updateCachedWindowSize();
-
           // Parse query params for width and height (ScreenPal style)
           const urlParams = new URLSearchParams(window.location.search);
           const w = urlParams.get('width');
           const h = urlParams.get('height');
-          if (w) this.frameWidth.set(Number(w));
-          if (h) this.frameHeight.set(Number(h));
+          if (w) {
+              this.frameWidth.set(Number(w));
+              this.defaultWidth = Number(w);
+          }
+          if (h) {
+              this.frameHeight.set(Number(h));
+              this.defaultHeight = Number(h);
+          }
+
+          this.updateCachedWindowSize();
 
           const initCamSize = this.cameraSize();
+          const initCamHeight = this.cameraShape() === 'circle' ? initCamSize : (initCamSize * 9 / 16);
           this.cameraPos.set({ 
               x: this.cachedWindowWidth - initCamSize - APP_CONFIG.CONSTRAINTS.CAMERA_EDGE_PADDING, 
-              y: this.cachedWindowHeight - initCamSize - APP_CONFIG.CONSTRAINTS.CAMERA_EDGE_PADDING 
+              y: this.cachedWindowHeight - initCamHeight - APP_CONFIG.CONSTRAINTS.CAMERA_EDGE_PADDING 
           });
       }
       
@@ -214,6 +254,7 @@ export class App implements OnDestroy, OnInit {
   // Snapping webcam to 3x3 positions (ScreenPal PIP overlay style)
   setWebcamPresetPosition(posName: string) {
     const size = this.cameraSize();
+    const camHeight = this.cameraShape() === 'circle' ? size : (size * 9 / 16);
     const pad = APP_CONFIG.CONSTRAINTS.CAMERA_EDGE_PADDING;
     const w = this.cachedWindowWidth;
     const h = this.cachedWindowHeight;
@@ -235,27 +276,27 @@ export class App implements OnDestroy, OnInit {
         break;
       case 'middle-left':
         x = pad;
-        y = (h - size) / 2;
+        y = (h - camHeight) / 2;
         break;
       case 'middle-center':
         x = (w - size) / 2;
-        y = (h - size) / 2;
+        y = (h - camHeight) / 2;
         break;
       case 'middle-right':
         x = w - size - pad;
-        y = (h - size) / 2;
+        y = (h - camHeight) / 2;
         break;
       case 'bottom-left':
         x = pad;
-        y = h - size - pad;
+        y = h - camHeight - pad;
         break;
       case 'bottom-center':
         x = (w - size) / 2;
-        y = h - size - pad;
+        y = h - camHeight - pad;
         break;
       case 'bottom-right':
         x = w - size - pad;
-        y = h - size - pad;
+        y = h - camHeight - pad;
         break;
     }
     this.cameraPos.set({ x, y });
@@ -477,6 +518,7 @@ export class App implements OnDestroy, OnInit {
         cameraStream: this.cameraStream(),
         cameraPos: this.cameraPos(),
         cameraSize: this.cameraSize(),
+        cameraShape: this.cameraShape(),
         qualityPreset: this.qualityPreset(),
         fpsPreset: this.fpsPreset(),
         cachedWindowWidth: this.cachedWindowWidth,

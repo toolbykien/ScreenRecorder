@@ -11,6 +11,7 @@ export interface RecordConfig {
     cameraStream: MediaStream | null;
     cameraPos: { x: number, y: number };
     cameraSize: number;
+    cameraShape?: 'circle' | 'rectangle';
     qualityPreset: 'high' | 'medium' | 'low';
     fpsPreset?: number;
     cachedWindowWidth: number;
@@ -46,6 +47,7 @@ export class RecordingService {
     zoomScale = signal(1.0);
     zoomCenter = signal({ x: 0.5, y: 0.5 });
     screenShareStream = signal<MediaStream | null>(null);
+    cameraShape = signal<'circle' | 'rectangle'>('circle');
 
     private timerInterval: ReturnType<typeof setInterval> | null = null;
     private countdownTimerInterval: ReturnType<typeof setInterval> | null = null;
@@ -144,6 +146,7 @@ export class RecordingService {
         this.isCameraEnabled.set(config.isCameraEnabled);
         this.cameraPos.set(config.cameraPos);
         this.cameraSize.set(config.cameraSize);
+        this.cameraShape.set(config.cameraShape || 'circle');
         this.showBorder.set(config.showBorder);
         this.borderColor.set(config.borderColor);
         this.cachedWindowWidth.set(config.cachedWindowWidth);
@@ -199,6 +202,7 @@ export class RecordingService {
                     isCameraEnabled: this.isCameraEnabled(),
                     cameraPos: this.cameraPos(),
                     cameraSize: this.cameraSize(),
+                    cameraShape: this.cameraShape(),
                     windowWidth: this.cachedWindowWidth(),
                     windowHeight: this.cachedWindowHeight(),
                     showBorder: this.showBorder(),

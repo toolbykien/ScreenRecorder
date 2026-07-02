@@ -3,6 +3,7 @@ export const APP_CONFIG = {
   LOCAL_STORAGE_KEYS: {
     QUALITY_PRESET: 'ichi_qualityPreset',
     CAMERA_SIZE: 'ichi_cameraSize',
+    CAMERA_SHAPE: 'ichi_cameraShape',
     UI_MODE: 'ichi_uiMode',
     FPS_PRESET: 'ichi_fpsPreset',
     SHOW_BORDER: 'ichi_showBorder',
@@ -11,6 +12,7 @@ export const APP_CONFIG = {
   },
   DEFAULTS: {
     CAMERA_SIZE: 120,
+    CAMERA_SHAPE: 'circle' as const,
     QUALITY_PRESET: 'medium' as const,
     UI_MODE: 'default' as const,
     FPS_PRESET: 30 as const,

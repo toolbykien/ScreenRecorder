@@ -1,4 +1,4 @@
-import { Directive, HostListener, input, output } from '@angular/core';
+import { Directive, HostListener, input, output, ElementRef, inject } from '@angular/core';
 import { APP_CONFIG } from './constants';
 
 @Directive({
@@ -7,6 +7,7 @@ import { APP_CONFIG } from './constants';
 })
 export class DraggableCameraDirective {
   cameraSize = input.required<number>();
+  cameraShape = input<'circle' | 'rectangle'>('circle');
   cameraPos = input.required<{ x: number; y: number }>();
   isRecording = input.required<boolean>();
   isCountingDown = input.required<boolean>();
@@ -17,6 +18,7 @@ export class DraggableCameraDirective {
   positionChange = output<{ x: number; y: number }>();
   draggingStateChange = output<boolean>();
 
+  private elRef = inject(ElementRef);
   private isDragging = false;
   private dragStart = { x: 0, y: 0 };
   private dragInitialPos = { x: 0, y: 0 };
@@ -36,10 +38,25 @@ export class DraggableCameraDirective {
     if (!this.isDragging) return;
     const dx = event.clientX - this.dragStart.x;
     const dy = event.clientY - this.dragStart.y;
-    this.positionChange.emit({ 
-      x: this.dragInitialPos.x + dx, 
-      y: this.dragInitialPos.y + dy 
-    });
+    
+    let targetX = this.dragInitialPos.x + dx;
+    let targetY = this.dragInitialPos.y + dy;
+    
+    const padding = APP_CONFIG.CONSTRAINTS.CAMERA_EDGE_PADDING;
+    const camWidth = this.cameraSize();
+    const camHeight = this.cameraShape() === 'circle' ? camWidth : (camWidth * 9 / 16);
+    
+    const minX = padding;
+    const maxX = this.cachedWindowWidth() - camWidth - padding;
+    const minY = padding;
+    const maxY = this.cachedWindowHeight() - camHeight - padding;
+    
+    if (targetX < minX) targetX = minX;
+    if (targetX > maxX) targetX = maxX;
+    if (targetY < minY) targetY = minY;
+    if (targetY > maxY) targetY = maxY;
+    
+    this.positionChange.emit({ x: targetX, y: targetY });
   }
 
   @HostListener('window:mouseup')
@@ -54,14 +71,15 @@ export class DraggableCameraDirective {
   private snapCameraToCorner() {
     const snapThreshold = APP_CONFIG.CONSTRAINTS.CAMERA_SNAP_THRESHOLD;
     const padding = APP_CONFIG.CONSTRAINTS.CAMERA_EDGE_PADDING;
-    const camSize = this.cameraSize();
+    const camWidth = this.cameraSize();
+    const camHeight = this.cameraShape() === 'circle' ? camWidth : (camWidth * 9 / 16);
     const currentX = this.cameraPos().x;
     const currentY = this.cameraPos().y;
 
     const minX = padding;
-    const maxX = this.cachedWindowWidth() - camSize - padding;
+    const maxX = this.cachedWindowWidth() - camWidth - padding;
     const minY = padding;
-    const maxY = this.cachedWindowHeight() - camSize - padding;
+    const maxY = this.cachedWindowHeight() - camHeight - padding;
 
     let targetX = currentX;
     let targetY = currentY;

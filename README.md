@@ -2,7 +2,7 @@
 
 🌐 **Language / Ngôn ngữ:** [Tiếng Việt](#tiếng-việt) | [English](#english)
 
-Tool được lấy cảm hứng và chỉnh sửa lại từ dự án Ichi của bạn Nguyễn Đức Anh
+Tool được lấy cảm hứng và chỉnh sửa lại từ dự án [Ichi-Ichi](https://github.com/kiencang/Ichi-Ichi) của bạn Nguyễn Đức Anh
 
 ---
 

@@ -12,6 +12,7 @@ export class SettingsService {
   showBorder = signal<boolean>(APP_CONFIG.DEFAULTS.SHOW_BORDER);
   borderColor = signal<string>(APP_CONFIG.DEFAULTS.BORDER_COLOR_DEFAULT);
   language = signal<'vi' | 'en'>(APP_CONFIG.DEFAULTS.LANGUAGE);
+  cameraShape = signal<'circle' | 'rectangle'>(APP_CONFIG.DEFAULTS.CAMERA_SHAPE);
 
   tempQualityPreset = signal<'high' | 'medium' | 'low'>(APP_CONFIG.DEFAULTS.QUALITY_PRESET);
   tempCameraSize = signal<number>(APP_CONFIG.DEFAULTS.CAMERA_SIZE);
@@ -20,6 +21,7 @@ export class SettingsService {
   tempShowBorder = signal<boolean>(APP_CONFIG.DEFAULTS.SHOW_BORDER);
   tempBorderColor = signal<string>(APP_CONFIG.DEFAULTS.BORDER_COLOR_DEFAULT);
   tempLanguage = signal<'vi' | 'en'>(APP_CONFIG.DEFAULTS.LANGUAGE);
+  tempCameraShape = signal<'circle' | 'rectangle'>(APP_CONFIG.DEFAULTS.CAMERA_SHAPE);
 
   constructor() {
     this.loadSettings();
@@ -73,6 +75,12 @@ export class SettingsService {
         this.language.set(storedLanguage);
         this.tempLanguage.set(storedLanguage);
       }
+
+      const storedShape = localStorage.getItem(APP_CONFIG.LOCAL_STORAGE_KEYS.CAMERA_SHAPE) as 'circle' | 'rectangle';
+      if (storedShape && ['circle', 'rectangle'].includes(storedShape)) {
+        this.cameraShape.set(storedShape);
+        this.tempCameraShape.set(storedShape);
+      }
     }
   }
 
@@ -84,6 +92,7 @@ export class SettingsService {
     const newShowBorder = this.tempShowBorder();
     const newBorderColor = this.tempBorderColor();
     const newLanguage = this.tempLanguage();
+    const newShape = this.tempCameraShape();
 
     this.qualityPreset.set(newQuality);
     this.cameraSize.set(newSize);
@@ -92,6 +101,7 @@ export class SettingsService {
     this.showBorder.set(newShowBorder);
     this.borderColor.set(newBorderColor);
     this.language.set(newLanguage);
+    this.cameraShape.set(newShape);
 
     if (typeof window !== 'undefined') {
       localStorage.setItem(APP_CONFIG.LOCAL_STORAGE_KEYS.QUALITY_PRESET, newQuality);
@@ -101,6 +111,7 @@ export class SettingsService {
       localStorage.setItem(APP_CONFIG.LOCAL_STORAGE_KEYS.SHOW_BORDER, newShowBorder.toString());
       localStorage.setItem(APP_CONFIG.LOCAL_STORAGE_KEYS.BORDER_COLOR, newBorderColor);
       localStorage.setItem(APP_CONFIG.LOCAL_STORAGE_KEYS.LANGUAGE, newLanguage);
+      localStorage.setItem(APP_CONFIG.LOCAL_STORAGE_KEYS.CAMERA_SHAPE, newShape);
     }
   }
 
@@ -112,6 +123,7 @@ export class SettingsService {
     this.showBorder.set(APP_CONFIG.DEFAULTS.SHOW_BORDER);
     this.borderColor.set(APP_CONFIG.DEFAULTS.BORDER_COLOR_DEFAULT);
     this.language.set(APP_CONFIG.DEFAULTS.LANGUAGE);
+    this.cameraShape.set(APP_CONFIG.DEFAULTS.CAMERA_SHAPE);
     
     this.tempQualityPreset.set(APP_CONFIG.DEFAULTS.QUALITY_PRESET);
     this.tempCameraSize.set(APP_CONFIG.DEFAULTS.CAMERA_SIZE);
@@ -120,6 +132,7 @@ export class SettingsService {
     this.tempShowBorder.set(APP_CONFIG.DEFAULTS.SHOW_BORDER);
     this.tempBorderColor.set(APP_CONFIG.DEFAULTS.BORDER_COLOR_DEFAULT);
     this.tempLanguage.set(APP_CONFIG.DEFAULTS.LANGUAGE);
+    this.tempCameraShape.set(APP_CONFIG.DEFAULTS.CAMERA_SHAPE);
 
     if (typeof window !== 'undefined') {
       localStorage.removeItem(APP_CONFIG.LOCAL_STORAGE_KEYS.QUALITY_PRESET);
@@ -129,6 +142,7 @@ export class SettingsService {
       localStorage.removeItem(APP_CONFIG.LOCAL_STORAGE_KEYS.SHOW_BORDER);
       localStorage.removeItem(APP_CONFIG.LOCAL_STORAGE_KEYS.BORDER_COLOR);
       localStorage.removeItem(APP_CONFIG.LOCAL_STORAGE_KEYS.LANGUAGE);
+      localStorage.removeItem(APP_CONFIG.LOCAL_STORAGE_KEYS.CAMERA_SHAPE);
     }
   }
 
@@ -140,5 +154,6 @@ export class SettingsService {
     this.tempShowBorder.set(this.showBorder());
     this.tempBorderColor.set(this.borderColor());
     this.tempLanguage.set(this.language());
+    this.tempCameraShape.set(this.cameraShape());
   }
 }
