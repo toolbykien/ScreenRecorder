@@ -35,6 +35,18 @@ export class RecordingService {
     audioLevels = signal<number[]>([15, 15, 15, 15, 15, 15, 15, 15, 15, 15]);
     recordingAttempted = signal(false);
 
+    // Dynamic signals for live composite mixing
+    isCameraEnabled = signal(false);
+    cameraPos = signal({ x: 20, y: 20 });
+    cameraSize = signal(120);
+    showBorder = signal(false);
+    borderColor = signal('#14b8a6');
+    cachedWindowWidth = signal(1248);
+    cachedWindowHeight = signal(702);
+    zoomScale = signal(1.0);
+    zoomCenter = signal({ x: 0.5, y: 0.5 });
+    screenShareStream = signal<MediaStream | null>(null);
+
     private timerInterval: ReturnType<typeof setInterval> | null = null;
     private countdownTimerInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -48,6 +60,7 @@ export class RecordingService {
     private analyserNode: AnalyserNode | null = null;
     private animationFrameId: number | null = null;
     private startTime = 0;
+    private recordedMimeType = '';
 
     private displayVideoEle: HTMLVideoElement | null = null;
     private canvasEle: HTMLCanvasElement | null = null;
@@ -80,6 +93,8 @@ export class RecordingService {
                     audio: true
                 });
             }
+
+            this.screenShareStream.set(this.displayStream);
 
             // 2. Mic
             try {
@@ -125,98 +140,122 @@ export class RecordingService {
                 hasAudio = true;
             }
 
-            let videoTracks = this.displayStream.getVideoTracks();
+        // Initialize dynamic signals from config
+        this.isCameraEnabled.set(config.isCameraEnabled);
+        this.cameraPos.set(config.cameraPos);
+        this.cameraSize.set(config.cameraSize);
+        this.showBorder.set(config.showBorder);
+        this.borderColor.set(config.borderColor);
+        this.cachedWindowWidth.set(config.cachedWindowWidth);
+        this.cachedWindowHeight.set(config.cachedWindowHeight);
+        this.zoomScale.set(1.0);
+        this.zoomCenter.set({ x: 0.5, y: 0.5 });
 
-            if (config.isCameraEnabled && config.cameraStream) {
-                this.displayVideoEle = document.createElement('video');
-                this.displayVideoEle.muted = true;
-                this.displayVideoEle.autoplay = true;
-                this.displayVideoEle.playsInline = true;
+        let videoTracks = this.displayStream.getVideoTracks();
 
-                this.displayVideoEle.srcObject = this.displayStream;
+        // Always run the canvas mixing loop to support dynamic webcam, zoom, and drawing overlays
+        if (true) {
+            this.displayVideoEle = document.createElement('video');
+            this.displayVideoEle.muted = true;
+            this.displayVideoEle.autoplay = true;
+            this.displayVideoEle.playsInline = true;
 
-                await new Promise<void>((resolve) => {
-                    this.displayVideoEle!.onloadedmetadata = () => {
-                        this.displayVideoEle!.play();
-                        this.canvasEle = document.createElement('canvas');
+            this.displayVideoEle.srcObject = this.displayStream;
 
-                        let targetWidth = this.displayVideoEle!.videoWidth;
-                        let targetHeight = this.displayVideoEle!.videoHeight;
-                        const MAX_RESOLUTION = APP_CONFIG.CONSTRAINTS.MAX_RESOLUTION;
-                        if (targetWidth > MAX_RESOLUTION) {
-                            const scaleFactor = MAX_RESOLUTION / targetWidth;
-                            targetWidth = MAX_RESOLUTION;
-                            targetHeight = Math.round(targetHeight * scaleFactor);
-                        }
+            await new Promise<void>((resolve) => {
+                this.displayVideoEle!.onloadedmetadata = () => {
+                    this.displayVideoEle!.play();
+                    this.canvasEle = document.createElement('canvas');
 
-                        this.canvasEle.width = targetWidth;
-                        this.canvasEle.height = targetHeight;
+                    let targetWidth = this.displayVideoEle!.videoWidth;
+                    let targetHeight = this.displayVideoEle!.videoHeight;
+                    const MAX_RESOLUTION = APP_CONFIG.CONSTRAINTS.MAX_RESOLUTION;
+                    if (targetWidth > MAX_RESOLUTION) {
+                        const scaleFactor = MAX_RESOLUTION / targetWidth;
+                        targetWidth = MAX_RESOLUTION;
+                        targetHeight = Math.round(targetHeight * scaleFactor);
+                    }
 
-                        this.canvasCtx = this.canvasEle!.getContext('2d', { alpha: false });
-                        if (this.canvasCtx) {
-                            this.canvasCtx.imageSmoothingEnabled = true;
-                            this.canvasCtx.imageSmoothingQuality = 'medium';
-                        }
-                        resolve();
-                    };
+                    this.canvasEle.width = targetWidth;
+                    this.canvasEle.height = targetHeight;
+
+                    this.canvasCtx = this.canvasEle!.getContext('2d', { alpha: false });
+                    if (this.canvasCtx) {
+                        this.canvasCtx.imageSmoothingEnabled = true;
+                        this.canvasCtx.imageSmoothingQuality = 'medium';
+                    }
+                    resolve();
+                };
+            });
+
+            let isDrawingFrame = false;
+            const drawFrame = () => {
+                if (isDrawingFrame) return;
+                if (!this.canvasCtx || !this.displayVideoEle || !this.canvasEle) return;
+
+                isDrawingFrame = true;
+                const camVideoEl = document.getElementById('camPreview') as HTMLVideoElement;
+                CanvasMixer.drawFrame(this.canvasCtx, this.canvasEle, this.displayVideoEle, camVideoEl, {
+                    isCameraEnabled: this.isCameraEnabled(),
+                    cameraPos: this.cameraPos(),
+                    cameraSize: this.cameraSize(),
+                    windowWidth: this.cachedWindowWidth(),
+                    windowHeight: this.cachedWindowHeight(),
+                    showBorder: this.showBorder(),
+                    borderColor: this.borderColor(),
+                    zoomScale: this.zoomScale(),
+                    zoomCenter: this.zoomCenter()
                 });
 
-                let isDrawingFrame = false;
-                const drawFrame = () => {
-                    if (isDrawingFrame) return;
-                    if (!this.canvasCtx || !this.displayVideoEle || !this.canvasEle) return;
-
-                    isDrawingFrame = true;
-                    const camVideoEl = document.getElementById('camPreview') as HTMLVideoElement;
-                    CanvasMixer.drawFrame(this.canvasCtx, this.canvasEle, this.displayVideoEle, camVideoEl, {
-                        isCameraEnabled: config.isCameraEnabled,
-                        cameraPos: config.cameraPos,
-                        cameraSize: config.cameraSize,
-                        windowWidth: config.cachedWindowWidth,
-                        windowHeight: config.cachedWindowHeight,
-                        showBorder: config.showBorder,
-                        borderColor: config.borderColor
-                    });
-                    isDrawingFrame = false;
-                };
-
-                try {
-                    const workerCode = `
-                  let timerId = null;
-                  self.onmessage = function(e) {
-                      if (e.data.action === 'start') {
-                          const interval = e.data.interval || 33.33;
-                          if (timerId) clearInterval(timerId);
-                          timerId = setInterval(() => {
-                              self.postMessage('tick');
-                           }, interval);
-                      } else if (e.data.action === 'stop') {
-                          if (timerId) clearInterval(timerId);
-                          timerId = null;
-                      }
-                  };
-              `;
-                    const blob = new Blob([workerCode], { type: 'application/javascript' });
-                    this.timerWorker = new Worker(URL.createObjectURL(blob));
-                    this.timerWorker.onmessage = () => {
-                        drawFrame();
-                    };
-                    this.timerWorker.postMessage({ action: 'start', interval: 1000 / idealFps });
-                } catch (err) {
-                    console.error('Không thể khởi tạo timer worker:', err);
-                    this.timerWorker = null;
-                    const intervalId = window.setInterval(drawFrame, 1000 / idealFps);
-                    this.timerWorker = {
-                        postMessage() {
-                            // No-op
-                        },
-                        terminate() { window.clearInterval(intervalId); },
-                        onmessage: null
-                    } as unknown as Worker;
+                // Composite drawing canvas if exists
+                const drawingCanvas = document.getElementById('drawingCanvas') as HTMLCanvasElement;
+                if (drawingCanvas && this.canvasCtx && this.canvasEle) {
+                    this.canvasCtx.drawImage(drawingCanvas, 0, 0, this.canvasEle.width, this.canvasEle.height);
                 }
 
-                videoTracks = this.canvasEle!.captureStream(idealFps).getVideoTracks();
+                isDrawingFrame = false;
+            };
+
+            // Draw the first frame immediately so captureStream initializes with valid size and content
+            drawFrame();
+
+            try {
+                const workerCode = `
+              let timerId = null;
+              self.onmessage = function(e) {
+                  if (e.data.action === 'start') {
+                      const interval = e.data.interval || 33.33;
+                      if (timerId) clearInterval(timerId);
+                      timerId = setInterval(() => {
+                          self.postMessage('tick');
+                       }, interval);
+                  } else if (e.data.action === 'stop') {
+                      if (timerId) clearInterval(timerId);
+                      timerId = null;
+                  }
+              };
+          `;
+                const blob = new Blob([workerCode], { type: 'application/javascript' });
+                this.timerWorker = new Worker(URL.createObjectURL(blob));
+                this.timerWorker.onmessage = () => {
+                    drawFrame();
+                };
+                this.timerWorker.postMessage({ action: 'start', interval: 1000 / idealFps });
+            } catch (err) {
+                console.error('Không thể khởi tạo timer worker:', err);
+                this.timerWorker = null;
+                const intervalId = window.setInterval(drawFrame, 1000 / idealFps);
+                this.timerWorker = {
+                    postMessage() {
+                        // No-op
+                    },
+                    terminate() { window.clearInterval(intervalId); },
+                    onmessage: null
+                } as unknown as Worker;
             }
+
+            videoTracks = this.canvasEle!.captureStream(idealFps).getVideoTracks();
+        }
 
             const tracks: MediaStreamTrack[] = [...videoTracks];
 
@@ -233,9 +272,14 @@ export class RecordingService {
             };
 
             this.recordedChunks = [];
-            const types = [
+            // Only request audio codecs if actual audio tracks exist (prevents recording corruptions on no-audio tracks)
+            const types = hasAudio ? [
                 'video/webm; codecs=vp9,opus',
                 'video/webm; codecs=vp8,opus',
+                'video/webm'
+            ] : [
+                'video/webm; codecs=vp9',
+                'video/webm; codecs=vp8',
                 'video/webm'
             ];
 
@@ -253,6 +297,7 @@ export class RecordingService {
 
             const mimeType = types.find(type => MediaRecorder.isTypeSupported(type)) || '';
             const options = mimeType ? { mimeType, videoBitsPerSecond, audioBitsPerSecond } : { videoBitsPerSecond, audioBitsPerSecond };
+            this.recordedMimeType = mimeType;
 
             this.mediaRecorder = new MediaRecorder(this.combinedStream, options);
 
@@ -381,7 +426,9 @@ export class RecordingService {
 
     private saveRecording(durationMs: number) {
         if (this.recordedChunks.length === 0) return;
-        const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+        // Strip out encoder codec parameters (e.g. "; codecs=vp9,opus") to prevent browser download and file format mapping issues
+        const baseMimeType = (this.recordedMimeType || 'video/webm').split(';')[0].trim();
+        const blob = new Blob(this.recordedChunks, { type: baseMimeType });
 
         const downloadBlob = (blobToSave: Blob) => {
             const url = URL.createObjectURL(blobToSave);
@@ -424,7 +471,18 @@ export class RecordingService {
         }
     }
 
+    isMuted = signal(false);
+
+    toggleMute() {
+        this.isMuted.update(m => !m);
+        if (this.micStream) {
+            this.micStream.getAudioTracks().forEach(t => t.enabled = !this.isMuted());
+        }
+    }
+
     cleanupStreams() {
+        this.isMuted.set(false);
+        this.screenShareStream.set(null);
         if (this.timerWorker !== null) {
             try {
                 this.timerWorker.postMessage({ action: 'stop' });

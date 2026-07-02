@@ -8,6 +8,8 @@ export interface CameraOverlayConfig {
   windowHeight: number;
   showBorder?: boolean;
   borderColor?: string;
+  zoomScale?: number;
+  zoomCenter?: { x: number; y: number };
 }
 
 export class CanvasMixer {
@@ -22,8 +24,19 @@ export class CanvasMixer {
     config: CameraOverlayConfig
   ) {
     try {
-      // 1. Render the main display background
-      canvasCtx.drawImage(displayVideo, 0, 0, canvasEle.width, canvasEle.height);
+      // 1. Render the main display background (with zoom support)
+      if (config.zoomScale && config.zoomScale > 1 && config.zoomCenter) {
+        canvasCtx.save();
+        const cx = config.zoomCenter.x * canvasEle.width;
+        const cy = config.zoomCenter.y * canvasEle.height;
+        canvasCtx.translate(cx, cy);
+        canvasCtx.scale(config.zoomScale, config.zoomScale);
+        canvasCtx.translate(-cx, -cy);
+        canvasCtx.drawImage(displayVideo, 0, 0, canvasEle.width, canvasEle.height);
+        canvasCtx.restore();
+      } else {
+        canvasCtx.drawImage(displayVideo, 0, 0, canvasEle.width, canvasEle.height);
+      }
 
       // 2. Overlay camera circle if enabled and ready
       if (config.isCameraEnabled && camVideoEl && camVideoEl.readyState >= 2) {
